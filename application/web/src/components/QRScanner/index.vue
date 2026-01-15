@@ -2,28 +2,28 @@
   <div class="qr-scanner-container">
     <div class="scanner-header">
       <h3>二维码扫描</h3>
-      <el-button 
-        type="text" 
-        icon="el-icon-close" 
-        @click="$emit('close')"
+      <el-button
+        type="text"
+        icon="el-icon-close"
         class="close-btn"
+        @click="$emit('close')"
       />
     </div>
-    
+
     <div class="scanner-content">
       <div v-if="!scanning" class="scanner-setup">
-        <el-button type="primary" @click="startScanning" icon="el-icon-camera">
+        <el-button type="primary" icon="el-icon-camera" @click="startScanning">
           开始扫描
         </el-button>
       </div>
-      
+
       <div v-else class="scanner-active">
-        <div id="qr-reader" class="qr-reader"></div>
-        <el-button type="warning" @click="stopScanning" icon="el-icon-video-pause">
+        <div id="qr-reader" class="qr-reader" />
+        <el-button type="warning" icon="el-icon-video-pause" @click="stopScanning">
           停止扫描
         </el-button>
       </div>
-      
+
       <div v-if="scanResult" class="scan-result">
         <el-alert
           :title="scanResult.success ? '扫描成功' : '扫描失败'"
@@ -34,7 +34,7 @@
         />
       </div>
     </div>
-    
+
     <div class="manual-input-section">
       <el-divider>或手动输入</el-divider>
       <el-input
@@ -43,7 +43,7 @@
         clearable
         @keyup.enter="handleManualInput"
       >
-        <el-button slot="append" @click="handleManualInput" type="primary">
+        <el-button slot="append" type="primary" @click="handleManualInput">
           查询
         </el-button>
       </el-input>
@@ -64,11 +64,17 @@ export default {
       manualCode: ''
     }
   },
+
+  beforeDestroy() {
+    if (this.html5QrCode) {
+      this.stopScanning()
+    }
+  },
   methods: {
     async startScanning() {
       try {
         this.html5QrCode = new Html5Qrcode('qr-reader')
-        
+
         const config = {
           fps: 10,
           qrbox: { width: 250, height: 250 },
@@ -81,7 +87,7 @@ export default {
           this.onScanSuccess,
           this.onScanFailure
         )
-        
+
         this.scanning = true
         this.$message.success('扫描已启动')
       } catch (error) {
@@ -109,7 +115,7 @@ export default {
         success: true,
         message: `扫描结果: ${decodedText}`
       }
-      
+
       this.stopScanning()
       this.$emit('scan-success', decodedText)
     },
@@ -124,18 +130,12 @@ export default {
         this.$message.warning('请输入溯源码')
         return
       }
-      
+
       this.$emit('scan-success', this.manualCode.trim())
     },
 
     clearResult() {
       this.scanResult = null
-    }
-  },
-
-  beforeDestroy() {
-    if (this.html5QrCode) {
-      this.stopScanning()
     }
   }
 }
@@ -156,12 +156,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  
+
   h3 {
     margin: 0;
     color: #303133;
   }
-  
+
   .close-btn {
     padding: 0;
     font-size: 18px;

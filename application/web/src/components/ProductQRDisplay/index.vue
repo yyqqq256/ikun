@@ -6,15 +6,15 @@
       width="400px"
       @close="handleClose"
     >
-      <div class="qr-content" v-loading="generating">
+      <div v-loading="generating" class="qr-content">
         <div v-if="qrCodeData" class="qr-image-section">
-          <img :src="qrCodeData" alt="产品二维码" class="qr-image" />
+          <img :src="qrCodeData" alt="产品二维码" class="qr-image">
           <div class="qr-info">
             <p class="trace-code">溯源码: {{ traceabilityCode }}</p>
             <p class="generate-time">生成时间: {{ generateTime }}</p>
           </div>
         </div>
-        
+
         <div v-if="error" class="error-message">
           <el-alert
             :title="error"
@@ -24,22 +24,22 @@
           />
         </div>
       </div>
-      
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">关闭</el-button>
-        <el-button 
-          type="primary" 
-          @click="downloadQRCode"
+        <el-button
+          type="primary"
           :disabled="!qrCodeData"
           icon="el-icon-download"
+          @click="downloadQRCode"
         >
           下载二维码
         </el-button>
-        <el-button 
-          type="success" 
-          @click="printQRCode"
+        <el-button
+          type="success"
           :disabled="!qrCodeData"
           icon="el-icon-printer"
+          @click="printQRCode"
         >
           打印
         </el-button>
@@ -95,10 +95,10 @@ export default {
         this.error = '溯源码不能为空'
         return
       }
-      
+
       this.generating = true
       this.error = null
-      
+
       try {
         const qrData = await generateProductQRCode(
           this.traceabilityCode,
@@ -107,7 +107,7 @@ export default {
             ...this.productInfo
           }
         )
-        
+
         this.qrCodeData = qrData
         this.generateTime = new Date().toLocaleString()
       } catch (error) {
@@ -117,7 +117,7 @@ export default {
         this.generating = false
       }
     },
-    
+
     downloadQRCode() {
       if (this.qrCodeData) {
         const filename = `产品二维码_${this.traceabilityCode}_${Date.now()}.png`
@@ -125,7 +125,7 @@ export default {
         this.$message.success('二维码下载成功')
       }
     },
-    
+
     printQRCode() {
       if (this.qrCodeData) {
         const printWindow = window.open('', '_blank', 'width=400,height=500')
@@ -174,7 +174,7 @@ export default {
         printWindow.print()
       }
     },
-    
+
     handleClose() {
       this.qrCodeData = null
       this.error = null
@@ -190,7 +190,7 @@ export default {
   .qr-content {
     text-align: center;
     min-height: 200px;
-    
+
     .qr-image-section {
       .qr-image {
         max-width: 300px;
@@ -199,31 +199,31 @@ export default {
         padding: 10px;
         background: white;
       }
-      
+
       .qr-info {
         margin-top: 15px;
         padding: 10px;
         background: #f5f7fa;
         border-radius: 4px;
-        
+
         p {
           margin: 5px 0;
           font-size: 14px;
           color: #606266;
         }
-        
+
         .trace-code {
           font-weight: bold;
           color: #303133;
         }
       }
     }
-    
+
     .error-message {
       padding: 20px;
     }
   }
-  
+
   .dialog-footer {
     text-align: right;
   }

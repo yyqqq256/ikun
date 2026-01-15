@@ -20,7 +20,7 @@ export async function generateQRCode(text, options = {}) {
       width: 256,
       ...options
     }
-    
+
     const qrCodeDataURL = await QRCode.toDataURL(text, defaultOptions)
     return qrCodeDataURL
   } catch (error) {
@@ -44,7 +44,7 @@ export async function generateProductQRCode(traceabilityCode, productInfo = {}) 
     timestamp: new Date().toISOString(),
     version: '1.0'
   }
-  
+
   const qrText = JSON.stringify(qrContent)
   return await generateQRCode(qrText, {
     width: 300,
@@ -64,7 +64,7 @@ export async function generateProductQRCode(traceabilityCode, productInfo = {}) 
 export function parseQRCodeContent(qrContent) {
   try {
     const parsed = JSON.parse(qrContent)
-    
+
     // 验证二维码类型
     if (parsed.type === 'product_trace') {
       return {
@@ -75,7 +75,7 @@ export function parseQRCodeContent(qrContent) {
         version: parsed.version
       }
     }
-    
+
     // 如果不是标准格式，尝试直接作为溯源码处理
     return {
       isValid: true,
@@ -105,12 +105,12 @@ export function validateQRContent(qrContent) {
   if (!qrContent || typeof qrContent !== 'string') {
     return false
   }
-  
+
   // 检查内容长度
   if (qrContent.length < 3 || qrContent.length > 1000) {
     return false
   }
-  
+
   // 尝试解析
   const parsed = parseQRCodeContent(qrContent)
   return parsed.isValid && parsed.traceabilityCode
